@@ -1,0 +1,30 @@
+# https://taskfile.dev
+
+version: '2'
+
+expansions: 3
+
+env:
+  CGO_ENABLED: 0
+  GOARCH: amd64
+  GOOS: linux
+#  GOOS: darwin
+vars:
+  PACKAGE: backend
+  GIT_COMMIT:
+    sh: |
+      if [ -e .git ]; then
+        git rev-parse HEAD
+      fi
+  GO_LDFLAGS: -w -s
+  GO_XFLAGS: |
+    -X '{{.PACKAGE}}.gitCommit={{.GIT_COMMIT}}' \
+    -X '{{.PACKAGE}}.buildDate={{ now | date "2006-01-02T15:04:05-0700" }}'
+  GO_BUILDFLAGS: -ldflags "{{.GO_LDFLAGS}} {{.GO_XFLAGS}}"
+
+tasks:
+  build:
+    desc: Build the backend API go binaries.
+    cmds:
+      - go build {{.GO_BUILDFLAGS}} -o bin/backend{{exeExt}} cmd/main/main.go
+      - go build {{.GO_BUILDFLAGS}} -o bin/tx{{exeExt}}      cmd/tx/main.go

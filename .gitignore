@@ -1,0 +1,9 @@
+/.idea/
+/.vscode/
+.DS_Store
+.env.local
+
+/log/
+/tmp/
+
+/compose.override.yml
